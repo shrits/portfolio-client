@@ -32,7 +32,7 @@ export default function ProfileView({ onMessageClick }) {
 
   return (
     <div>
-      <ProfileHeader postCount={posts.length} onMessageClick={onMessageClick} />
+      <ProfileHeader postCount={Array.isArray(posts) ? posts.length : 0} onMessageClick={onMessageClick} />
       <ProfileGrid posts={posts} />
     </div>
   );

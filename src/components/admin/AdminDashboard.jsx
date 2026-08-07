@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                    {posts.map((post) => (
+                    {(Array.isArray(posts) ? posts : []).map((post) => (
                       <div
                         key={post._id}
                         className="flex items-center theme-transition"

@@ -10,6 +10,8 @@ export default function ProfileGrid({ posts }) {
   const openPost = useCallback((post) => setSelectedPost(post), []);
   const closePost = useCallback(() => setSelectedPost(null), []);
 
+  const postList = Array.isArray(posts) ? posts : [];
+
   return (
     <div
       className="animate-fade-in"
@@ -42,7 +44,7 @@ export default function ProfileGrid({ posts }) {
         className="grid grid-cols-3 gap-[3px]"
         style={{ maxWidth: '935px' }}
       >
-        {posts.map((post, index) => (
+        {postList.map((post, index) => (
           <div
             key={post._id}
             role="button"

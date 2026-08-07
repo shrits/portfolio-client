@@ -17,10 +17,11 @@ export function PostsProvider({ children }) {
     }
     try {
       const data = await getPosts();
-      setPosts(data);
+      setPosts(Array.isArray(data) ? data : []);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch posts:', err);
+      setPosts([]);
       setError(err);
     } finally {
       setLoading(false);
