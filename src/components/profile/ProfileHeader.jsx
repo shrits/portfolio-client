@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { BadgeCheck } from 'lucide-react';
 import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
+import ProfilePictureModal from './ProfilePictureModal';
+
+const PROFILE_IMAGE_URL = 'https://pub-1c7a197468ca49d6b541fb3e666ada3c.r2.dev/IMG_4612.JPG';
 
 export default function ProfileHeader({ postCount, onMessageClick }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const [isPictureModalOpen, setIsPictureModalOpen] = useState(false);
 
   return (
     <header
@@ -23,9 +28,19 @@ export default function ProfileHeader({ postCount, onMessageClick }) {
           gap: isDesktop ? 'var(--space-3xl)' : 'var(--space-lg)',
         }}
       >
-        {/* Profile Picture (no story ring) */}
+        {/* Profile Picture (clickable, opens enlarged view) */}
         <div
-          className="shrink-0 rounded-full overflow-hidden"
+          role="button"
+          tabIndex={0}
+          aria-label="View enlarged profile picture"
+          onClick={() => setIsPictureModalOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setIsPictureModalOpen(true);
+            }
+          }}
+          className="shrink-0 rounded-full overflow-hidden cursor-pointer group transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg"
           style={{
             width: isDesktop ? '150px' : '80px',
             height: isDesktop ? '150px' : '80px',
@@ -33,12 +48,12 @@ export default function ProfileHeader({ postCount, onMessageClick }) {
           }}
         >
           <img
-            src={getOptimizedImageUrl('https://pub-1c7a197468ca49d6b541fb3e666ada3c.r2.dev/IMG_4612.JPG', { width: 300, quality: 85 })}
+            src={getOptimizedImageUrl(PROFILE_IMAGE_URL, { width: 300, quality: 85 })}
             alt="Profile"
             fetchPriority="high"
             decoding="async"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-200 group-hover:brightness-95"
           />
         </div>
 
@@ -169,6 +184,15 @@ export default function ProfileHeader({ postCount, onMessageClick }) {
           ))}
         </div>
       )}
+
+      {/* Enlarged Profile Picture Modal */}
+      <ProfilePictureModal
+        isOpen={isPictureModalOpen}
+        onClose={() => setIsPictureModalOpen(false)}
+        imageUrl={PROFILE_IMAGE_URL}
+        username="shrits"
+        fullName="Shritesh Santra (Soumo)"
+      />
     </header>
   );
 }
