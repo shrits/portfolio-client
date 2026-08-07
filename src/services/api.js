@@ -66,6 +66,9 @@ export const createPost = (data) =>
 export const updatePost = (id, data) =>
   api.put(`/admin/posts/${id}`, data).then((res) => res.data);
 
+export const reorderPosts = (orderedIds) =>
+  api.put('/admin/posts/reorder', { orderedIds }).then((res) => res.data);
+
 export const deletePost = (id) =>
   api.delete(`/admin/posts/${id}`).then((res) => res.data);
 

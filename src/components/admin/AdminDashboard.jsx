@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { usePosts } from '../../context/PostsContext';
-import { getPosts, createPost, updatePost, deletePost } from '../../services/api';
+import { getPosts, createPost, updatePost, deletePost, reorderPosts } from '../../services/api';
 import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
 import PostForm from './PostForm';
 import MessagesInbox from './MessagesInbox';
@@ -14,6 +14,8 @@ import {
   Image,
   Mail,
   Loader2,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import InstagramLogo from '../shared/InstagramLogo';
 
@@ -25,6 +27,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('posts');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reordering, setReordering] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
 
@@ -39,11 +42,35 @@ export default function AdminDashboard() {
   const fetchPosts = async () => {
     try {
       const data = await getPosts();
-      setPosts(data);
+      setPosts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching posts:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMovePost = async (index, direction) => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= posts.length || reordering) return;
+
+    const newPosts = [...posts];
+    const item = newPosts[index];
+    newPosts.splice(index, 1);
+    newPosts.splice(targetIndex, 0, item);
+
+    // Optimistic UI update
+    setPosts(newPosts);
+    setReordering(true);
+
+    try {
+      await reorderPosts(newPosts.map((p) => p._id));
+      await refreshPosts();
+    } catch (err) {
+      console.error('Failed to save new post order:', err);
+      fetchPosts(); // Rollback on failure
+    } finally {
+      setReordering(false);
     }
   };
 
@@ -218,7 +245,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                    {(Array.isArray(posts) ? posts : []).map((post) => (
+                    {(Array.isArray(posts) ? posts : []).map((post, index) => (
                       <div
                         key={post._id}
                         className="flex items-center theme-transition"
@@ -233,6 +260,61 @@ export default function AdminDashboard() {
                         onMouseEnter={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
                       >
+                        {/* Reorder Up/Down arrows and index badge */}
+                        <div className="flex items-center shrink-0" style={{ gap: 'var(--space-xs)' }}>
+                          <div className="flex flex-col" style={{ gap: '2px' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleMovePost(index, 'up')}
+                              disabled={index === 0 || reordering}
+                              title={index === 0 ? 'Already at the top' : 'Move post up'}
+                              aria-label="Move post up"
+                              className="p-1 rounded cursor-pointer transition-colors"
+                              style={{
+                                lineHeight: 0,
+                                backgroundColor: 'var(--surface-secondary)',
+                                border: '1px solid var(--border-secondary)',
+                                color: index === 0 ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                                opacity: index === 0 ? 0.3 : 1,
+                                cursor: index === 0 ? 'not-allowed' : 'pointer',
+                              }}
+                            >
+                              <ChevronUp size={13} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMovePost(index, 'down')}
+                              disabled={index === (Array.isArray(posts) ? posts.length : 0) - 1 || reordering}
+                              title={index === (Array.isArray(posts) ? posts.length : 0) - 1 ? 'Already at the bottom' : 'Move post down'}
+                              aria-label="Move post down"
+                              className="p-1 rounded cursor-pointer transition-colors"
+                              style={{
+                                lineHeight: 0,
+                                backgroundColor: 'var(--surface-secondary)',
+                                border: '1px solid var(--border-secondary)',
+                                color: index === (Array.isArray(posts) ? posts.length : 0) - 1 ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                                opacity: index === (Array.isArray(posts) ? posts.length : 0) - 1 ? 0.3 : 1,
+                                cursor: index === (Array.isArray(posts) ? posts.length : 0) - 1 ? 'not-allowed' : 'pointer',
+                              }}
+                            >
+                              <ChevronDown size={13} />
+                            </button>
+                          </div>
+                          <span
+                            className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded"
+                            style={{
+                              backgroundColor: 'var(--surface-secondary)',
+                              color: 'var(--text-secondary)',
+                              minWidth: '24px',
+                              textAlign: 'center',
+                              fontSize: '11px',
+                            }}
+                            title={`Position #${index + 1}`}
+                          >
+                            #{index + 1}
+                          </span>
+                        </div>
+
                         <img
                           src={getOptimizedImageUrl(post.imageUrl, { width: 120, quality: 75 })}
                           alt="Thumbnail"
