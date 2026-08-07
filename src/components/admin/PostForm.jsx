@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { getOptimizedImageUrl } from '../../utils/imageOptimizer';
-import axios from 'axios';
+import { checkImageSize } from '../../services/api';
 
 export default function PostForm({ initialData, onSubmit, onCancel, isEditing }) {
   const [form, setForm] = useState({
@@ -29,8 +29,8 @@ export default function PostForm({ initialData, onSubmit, onCancel, isEditing })
     const timer = setTimeout(async () => {
       setCheckingSize(true);
       try {
-        const res = await axios.get(`/api/images/check-size?url=${encodeURIComponent(form.imageUrl)}`);
-        setSizeInfo(res.data);
+        const data = await checkImageSize(form.imageUrl);
+        setSizeInfo(data);
       } catch {
         setSizeInfo({ accessible: false });
       } finally {

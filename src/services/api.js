@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -69,5 +71,8 @@ export const deletePost = (id) =>
 
 export const getMessages = () =>
   api.get('/admin/messages').then((res) => res.data);
+
+export const checkImageSize = (url) =>
+  api.get(`/images/check-size?url=${encodeURIComponent(url)}`).then((res) => res.data);
 
 export default api;
