@@ -77,29 +77,6 @@ export default function ProfilePictureModal({ isOpen, onClose, imageUrl, usernam
             referrerPolicy="no-referrer"
           />
         </div>
-
-        {/* User Info below Avatar */}
-        <div className="flex flex-col items-center mt-6 text-center">
-          <div className="flex items-center gap-1.5">
-            <span
-              className="text-white text-lg font-semibold tracking-tight"
-              style={{ letterSpacing: '-0.2px' }}
-            >
-              {username}
-            </span>
-            <BadgeCheck
-              size={18}
-              style={{
-                color: 'var(--accent-primary)',
-                fill: 'var(--accent-primary)',
-                stroke: 'transparent',
-              }}
-            />
-          </div>
-          <span className="text-white/60 text-sm mt-0.5">
-            {fullName}
-          </span>
-        </div>
       </div>
     </div>
   );
