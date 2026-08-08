@@ -12,7 +12,7 @@ export default function ProfileView({ onMessageClick }) {
         <div className="flex items-center mb-8" style={{ gap: 'var(--space-3xl)' }}>
           <div
             className="skeleton rounded-full"
-            style={{ width: '150px', height: '150px', flexShrink: 0 }}
+            style={{ width: '180px', height: '180px', flexShrink: 0 }}
           />
           <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
             <div className="skeleton" style={{ width: '200px', height: '24px' }} />

@@ -42,8 +42,8 @@ export default function ProfileHeader({ postCount, onMessageClick }) {
           }}
           className="shrink-0 rounded-full overflow-hidden cursor-pointer group transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg"
           style={{
-            width: isDesktop ? '150px' : '80px',
-            height: isDesktop ? '150px' : '80px',
+            width: isDesktop ? '180px' : '100px',
+            height: isDesktop ? '180px' : '100px',
             border: '1px solid var(--border-primary)',
           }}
         >
