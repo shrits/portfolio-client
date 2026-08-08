@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X,
   Heart,
@@ -15,6 +15,12 @@ const PROFILE_IMAGE_URL = 'https://pub-1c7a197468ca49d6b541fb3e666ada3c.r2.dev/I
 
 export default function PostModal({ post, isOpen, onClose }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const [highResLoaded, setHighResLoaded] = useState(false);
+
+  // Reset loaded state on new post
+  useEffect(() => {
+    setHighResLoaded(false);
+  }, [post?._id]);
 
   // Close on Escape
   useEffect(() => {
@@ -46,6 +52,12 @@ export default function PostModal({ post, isOpen, onClose }) {
       )
     );
   };
+
+  const previewThumbnailUrl = getOptimizedImageUrl(post.imageUrl, { width: 450, quality: 75 });
+  const fullImageUrl = getOptimizedImageUrl(post.imageUrl, {
+    width: isDesktop ? 1000 : 750,
+    quality: 78,
+  });
 
   return (
     <div
@@ -149,7 +161,7 @@ export default function PostModal({ post, isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Mobile Image (Prominent & Full Width on Top) */}
+          {/* Mobile Image (Prominent & Full Width on Top with Progressive Blur-up) */}
           <div
             className="relative w-full bg-black flex items-center justify-center shrink-0 overflow-hidden"
             style={{
@@ -157,12 +169,26 @@ export default function PostModal({ post, isOpen, onClose }) {
               minHeight: '260px',
             }}
           >
+            {/* Low-res instant blur placeholder */}
+            {!highResLoaded && (
+              <img
+                src={previewThumbnailUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-contain filter blur-md scale-105 opacity-60 pointer-events-none"
+              />
+            )}
+
+            {/* High-res image */}
             <img
-              src={getOptimizedImageUrl(post.imageUrl, { width: 1000, quality: 85 })}
+              src={fullImageUrl}
               alt={post.caption?.substring(0, 80) || 'Post image'}
               decoding="async"
               referrerPolicy="no-referrer"
-              className="w-full h-auto object-contain"
+              onLoad={() => setHighResLoaded(true)}
+              className={`relative z-10 w-full h-auto object-contain transition-opacity duration-300 ${
+                highResLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               style={{ maxHeight: '58vh' }}
             />
           </div>
@@ -253,9 +279,9 @@ export default function PostModal({ post, isOpen, onClose }) {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Desktop Image Side */}
+          {/* Desktop Image Side with Progressive Blur-up */}
           <div
-            className="relative shrink-0"
+            className="relative shrink-0 overflow-hidden"
             style={{
               flex: '1 1 60%',
               maxWidth: '65%',
@@ -265,15 +291,27 @@ export default function PostModal({ post, isOpen, onClose }) {
               justifyContent: 'center',
             }}
           >
+            {/* Low-res instant blur placeholder */}
+            {!highResLoaded && (
+              <img
+                src={previewThumbnailUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-contain filter blur-md scale-105 opacity-60 pointer-events-none"
+              />
+            )}
+
+            {/* High-res image */}
             <img
-              src={getOptimizedImageUrl(post.imageUrl, { width: 1200, quality: 85 })}
+              src={fullImageUrl}
               alt={post.caption?.substring(0, 80) || 'Post image'}
               decoding="async"
               referrerPolicy="no-referrer"
+              onLoad={() => setHighResLoaded(true)}
+              className={`relative z-10 w-full h-full object-contain transition-opacity duration-300 ${
+                highResLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
                 maxHeight: '90vh',
               }}
             />

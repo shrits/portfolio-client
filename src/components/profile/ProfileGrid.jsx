@@ -10,6 +10,12 @@ export default function ProfileGrid({ posts }) {
   const openPost = useCallback((post) => setSelectedPost(post), []);
   const closePost = useCallback(() => setSelectedPost(null), []);
 
+  const prefetchPostImage = useCallback((imageUrl) => {
+    if (!imageUrl) return;
+    const img = new Image();
+    img.src = getOptimizedImageUrl(imageUrl, { width: 1000, quality: 78 });
+  }, []);
+
   const postList = Array.isArray(posts) ? posts : [];
 
   return (
@@ -53,6 +59,8 @@ export default function ProfileGrid({ posts }) {
             className="grid-item relative cursor-pointer aspect-square overflow-hidden bg-[var(--surface-tertiary)]"
             style={{ borderRadius: '2px' }}
             onClick={() => openPost(post)}
+            onMouseEnter={() => prefetchPostImage(post.imageUrl)}
+            onTouchStart={() => prefetchPostImage(post.imageUrl)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -61,7 +69,7 @@ export default function ProfileGrid({ posts }) {
             }}
           >
             <img
-              src={getOptimizedImageUrl(post.imageUrl, { width: 600, quality: 80 })}
+              src={getOptimizedImageUrl(post.imageUrl, { width: 450, quality: 75 })}
               alt={post.caption?.substring(0, 50) || 'Post'}
               loading={index < 6 ? 'eager' : 'lazy'}
               fetchPriority={index < 3 ? 'high' : 'auto'}
