@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminLogin } from '../../services/api';
 import { Loader2 } from 'lucide-react';
-import InstagramLogo from '../shared/InstagramLogo';
+import CatLogo from '../shared/CatLogo';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -70,7 +70,7 @@ export default function AdminLogin() {
             {/* Logo */}
             <div className="flex justify-center" style={{ marginBottom: 'var(--space-xl)' }}>
               <div className="flex items-center" style={{ gap: 'var(--space-md)' }}>
-                <InstagramLogo size={28} />
+                <CatLogo size={28} />
                 <span
                   className="text-gradient"
                   style={{

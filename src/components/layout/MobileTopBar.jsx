@@ -1,4 +1,4 @@
-import InstagramLogo from '../shared/InstagramLogo';
+import CatLogo from '../shared/CatLogo';
 import ThemeToggle from '../shared/ThemeToggle';
 
 export default function MobileTopBar() {
@@ -12,7 +12,7 @@ export default function MobileTopBar() {
       }}
     >
       <div className="flex items-center gap-2.5">
-        <InstagramLogo size={22} />
+        <CatLogo size={22} />
         <span
           className="text-gradient"
           style={{

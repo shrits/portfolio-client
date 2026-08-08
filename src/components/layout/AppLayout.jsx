@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom';
-import InstagramLogo from '../shared/InstagramLogo';
+import CatLogo from '../shared/CatLogo';
 import ThemeToggle from '../shared/ThemeToggle';
 
 export default function AppLayout() {
@@ -23,7 +23,7 @@ export default function AppLayout() {
           }}
         >
           <Link to="/profile" className="flex items-center gap-2.5">
-            <InstagramLogo size={24} />
+            <CatLogo size={24} />
             <span
               className="text-gradient font-bold"
               style={{

@@ -17,7 +17,7 @@ import {
   ChevronUp,
   ChevronDown,
 } from 'lucide-react';
-import InstagramLogo from '../shared/InstagramLogo';
+import CatLogo from '../shared/CatLogo';
 
 export default function AdminDashboard() {
   const { isAuthenticated, username, logout } = useAuth();
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
         }}
       >
         <div className="flex items-center" style={{ gap: 'var(--space-md)' }}>
-          <InstagramLogo size={22} />
+          <CatLogo size={22} />
           <span style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-primary)' }}>
             Admin Dashboard
           </span>

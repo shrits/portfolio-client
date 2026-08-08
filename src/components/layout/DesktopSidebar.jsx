@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { Home, Send, User } from 'lucide-react';
-import InstagramLogo from '../shared/InstagramLogo';
+import CatLogo from '../shared/CatLogo';
 import ThemeToggle from '../shared/ThemeToggle';
 
 export default function DesktopSidebar({ onMessageClick }) {
@@ -22,7 +22,7 @@ export default function DesktopSidebar({ onMessageClick }) {
       {/* Logo */}
       <div style={{ padding: 'var(--space-xl) var(--space-lg) var(--space-lg)' }}>
         <NavLink to="/profile" className="flex items-center gap-3">
-          <InstagramLogo size={26} />
+          <CatLogo size={26} />
           <span
             className="text-gradient"
             style={{
